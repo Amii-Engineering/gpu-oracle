@@ -112,8 +112,8 @@ class Plotter:
             rows=num_rows,
             cols=2,
             subplot_titles=subplot_titles,
-            vertical_spacing=0.18,
-            horizontal_spacing=0.12
+            vertical_spacing=0.08,
+            horizontal_spacing=0.10
         )
 
         # Track which GPUs we've already added to the legend
@@ -164,7 +164,7 @@ class Plotter:
             plot_bgcolor="#161b22",  # Slightly lighter plot area (pure grey)
             title_text=f"<b style='color: #c9d1d9; font-size: 18px;'>GPU Oracle Dashboard</b> <span style='color: #8b949e; font-size: 14px;'>| {self.run_name}</span>",
             font=dict(color="#c9d1d9", family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif", size=11),
-            height=400 * num_rows + 140,  # Increased height for less compression
+            height=500 * num_rows + 120,  # Taller plots for readability
             hovermode="x unified",
             showlegend=True,
             legend=dict(
