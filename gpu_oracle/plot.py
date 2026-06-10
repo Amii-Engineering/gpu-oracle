@@ -112,8 +112,8 @@ class Plotter:
             rows=num_rows,
             cols=2,
             subplot_titles=subplot_titles,
-            vertical_spacing=0.08,
-            horizontal_spacing=0.10
+            vertical_spacing=0.05,
+            horizontal_spacing=0.08
         )
 
         # Track which GPUs we've already added to the legend
@@ -209,11 +209,10 @@ class Plotter:
             annotation['font'] = dict(color='#8b949e', size=11, family="'Inter', sans-serif", weight='normal')
             annotation['yshift'] = 5  # Shift title up slightly to give more plot space
 
-        # Force plot areas to fill their space better
+        # Force plot areas to fill their space better by adjusting ranges
         for i in range(1, num_rows + 1):
             for j in range(1, 3):
-                fig.update_xaxes(rangepad=0, row=i, col=j)
-                fig.update_yaxes(rangepad=0, row=i, col=j)
+                fig.update_yaxes(autorange=True, row=i, col=j)
 
         # Set default output path
         if output_path is None:
