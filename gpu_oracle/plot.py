@@ -27,38 +27,7 @@ METRIC_CONFIG = {
     "pci_rx": {"title": "PCI RX Throughput", "unit": "MB/s", "color": "#FFB3BA", "conversion": 1.0},
 }
 
-# Dark theme template (Grafana-style)
-DARK_THEME = {
-    "layout": {
-        "paper_bgcolor": "#111827",  # Dark gray background
-        "plot_bgcolor": "#1F2937",  # Slightly lighter plot area
-        "font": {"color": "#E5E7EB"},  # Light gray text
-        "hoverlabel": {
-            "bgcolor": "#374151",
-            "bordercolor": "#4B5563",
-            "font": {"color": "#E5E7EB"}
-        },
-        "xaxis": {
-            "gridcolor": "#374151",
-            "linecolor": "#4B5563",
-            "tickcolor": "#6B7280",
-            "zerolinecolor": "#374151"
-        },
-        "yaxis": {
-            "gridcolor": "#374151",
-            "linecolor": "#4B5563",
-            "tickcolor": "#6B7280",
-            "zerolinecolor": "#374151"
-        },
-        "legend": {
-            "bgcolor": "rgba(31, 41, 55, 0.8)",
-            "bordercolor": "#4B5563",
-            "font": {"color": "#E5E7EB"}
-        }
-    }
-}
-
-# GPU color palette (distinct, modern colors)
+# GPU color palette (Grafana-inspired: distinct but not too bright)
 GPU_COLORS = [
     "#3B82F6",  # Blue
     "#EF4444",  # Red
@@ -120,7 +89,7 @@ class Plotter:
         return organized, metric_names
 
     def generate(self, output_path: Path | None = None) -> Path:
-        """Generate the HTML dashboard with dark theme."""
+        """Generate the HTML dashboard with Grafana-style dark theme."""
         self._load_data()
         organized, metric_names = self._organize_data()
 
@@ -143,8 +112,8 @@ class Plotter:
             rows=num_rows,
             cols=2,
             subplot_titles=subplot_titles,
-            vertical_spacing=0.15,
-            horizontal_spacing=0.10
+            vertical_spacing=0.18,
+            horizontal_spacing=0.12
         )
 
         # Track which GPUs we've already added to the legend
@@ -177,9 +146,10 @@ class Plotter:
                         y=converted_values,
                         mode="lines",
                         name=f"GPU {gpu_id}",
-                        line=dict(color=color, width=1.5),
+                        line=dict(color=color, width=2),
                         legendgroup=f"gpu{gpu_id}",
                         showlegend=show_in_legend,
+                        connectgaps=True,
                         hovertemplate=f"<b>GPU {gpu_id}</b><br>" +
                                       "Time: %{x}<br>" +
                                       f"{metric}: %{{y:.2f}} {config['unit']}<br>" +
@@ -188,46 +158,53 @@ class Plotter:
                     row=row, col=col
                 )
 
-        # Apply dark theme
+        # Grafana-style dark theme - pure greyscale
         fig.update_layout(
-            **{k: v for k, v in DARK_THEME["layout"].items() if k not in ("font", "legend")},
-            title_text=f"<b style='color: #E5E7EB'>GPU Oracle Dashboard</b> <span style='color: #6B7280'>| {self.run_name}</span>",
-            title_font_size=20,
-            font=dict(color="#E5E7EB", family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", size=12),
-            height=320 * num_rows + 120,
+            paper_bgcolor="#0d1117",  # GitHub dark dim background (pure grey)
+            plot_bgcolor="#161b22",  # Slightly lighter plot area (pure grey)
+            title_text=f"<b style='color: #c9d1d9; font-size: 18px;'>GPU Oracle Dashboard</b> <span style='color: #8b949e; font-size: 14px;'>| {self.run_name}</span>",
+            font=dict(color="#c9d1d9", family="'Inter', -apple-system, BlinkMacSystemFont, sans-serif", size=11),
+            height=400 * num_rows + 140,  # Increased height for less compression
             hovermode="x unified",
             showlegend=True,
             legend=dict(
                 orientation="h",
                 yanchor="bottom",
-                y=1.01,
+                y=1.005,
                 xanchor="center",
                 x=0.5,
-                bgcolor="rgba(17, 24, 39, 0)",
-                borderwidth=0
+                bgcolor="rgba(13, 17, 23, 0)",
+                borderwidth=0,
+                font=dict(color="#8b949e", size=11)
             ),
-            margin=dict(t=80, b=50, l=60, r=30)
+            margin=dict(t=100, b=60, l=70, r=40)
         )
 
-        # Update subplot axes with dark theme
+        # Update axes with Grafana-style greyscale theme
         fig.update_xaxes(
-            gridcolor="#374151",
-            linecolor="#4B5563",
-            tickcolor="#6B7280",
             showgrid=True,
-            gridwidth=1
+            gridcolor="#30363d",  # Subtle grey grid
+            gridwidth=1,
+            linecolor="#30363d",
+            linewidth=1,
+            tickcolor="#8b949e",
+            tickfont=dict(color="#8b949e", size=10),
+            title_font=dict(color="#8b949e", size=11)
         )
         fig.update_yaxes(
-            gridcolor="#374151",
-            linecolor="#4B5563",
-            tickcolor="#6B7280",
             showgrid=True,
-            gridwidth=1
+            gridcolor="#30363d",  # Subtle grey grid
+            gridwidth=1,
+            linecolor="#30363d",
+            linewidth=1,
+            tickcolor="#8b949e",
+            tickfont=dict(color="#8b949e", size=10),
+            title_font=dict(color="#8b949e", size=11)
         )
 
-        # Update subplot titles color
+        # Update subplot titles with Grafana-style styling
         for annotation in fig['layout']['annotations']:
-            annotation['font'] = dict(color='#9CA3AF', size=13, family="'Inter', sans-serif")
+            annotation['font'] = dict(color='#8b949e', size=12, family="'Inter', sans-serif", weight='normal')
 
         # Set default output path
         if output_path is None:
@@ -242,21 +219,30 @@ class Plotter:
             config={
                 'displayModeBar': True,
                 'displaylogo': False,
-                'modeBarButtonsToRemove': ['lasso2d', 'select2d']
+                'modeBarButtonsToRemove': ['lasso2d', 'select2d'],
+                'responsive': True
             }
         )
 
-        # Add custom CSS for better styling
+        # Add custom CSS for Grafana-like styling
         custom_css = """
         <style>
+            * {
+                box-sizing: border-box;
+            }
             body {
                 margin: 0;
-                padding: 0;
-                background-color: #111827;
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                padding: 20px;
+                background-color: #0d1117;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                color: #c9d1d9;
             }
             .plotly-graph-div {
-                background-color: #111827;
+                background-color: #0d1117;
+            }
+            .plotly .modebar {
+                background: rgba(22, 27, 34, 0.9) !important;
+                border: 1px solid #30363d !important;
             }
         </style>
         """
