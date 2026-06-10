@@ -177,10 +177,10 @@ class Plotter:
                 borderwidth=0,
                 font=dict(color="#8b949e", size=11)
             ),
-            margin=dict(t=100, b=60, l=70, r=40)
+            margin=dict(t=80, b=40, l=60, r=30)
         )
 
-        # Update axes with Grafana-style greyscale theme
+        # Update axes with Grafana-style greyscale theme and compact margins
         fig.update_xaxes(
             showgrid=True,
             gridcolor="#30363d",  # Subtle grey grid
@@ -189,7 +189,8 @@ class Plotter:
             linewidth=1,
             tickcolor="#8b949e",
             tickfont=dict(color="#8b949e", size=10),
-            title_font=dict(color="#8b949e", size=11)
+            title_font=dict(color="#8b949e", size=11),
+            automargin=True
         )
         fig.update_yaxes(
             showgrid=True,
@@ -199,12 +200,20 @@ class Plotter:
             linewidth=1,
             tickcolor="#8b949e",
             tickfont=dict(color="#8b949e", size=10),
-            title_font=dict(color="#8b949e", size=11)
+            title_font=dict(color="#8b949e", size=11),
+            automargin=True
         )
 
-        # Update subplot titles with Grafana-style styling
+        # Update subplot titles with more compact styling
         for annotation in fig['layout']['annotations']:
-            annotation['font'] = dict(color='#8b949e', size=12, family="'Inter', sans-serif", weight='normal')
+            annotation['font'] = dict(color='#8b949e', size=11, family="'Inter', sans-serif", weight='normal')
+            annotation['yshift'] = 5  # Shift title up slightly to give more plot space
+
+        # Force plot areas to fill their space better
+        for i in range(1, num_rows + 1):
+            for j in range(1, 3):
+                fig.update_xaxes(rangepad=0, row=i, col=j)
+                fig.update_yaxes(rangepad=0, row=i, col=j)
 
         # Set default output path
         if output_path is None:
