@@ -1,0 +1,29 @@
+# GPU Oracle metrics configuration
+# Enable or disable which metrics to track during gathering
+
+metrics:
+  # GPU utilization percentage (0-100)
+  utilization: true
+
+  # Memory usage in MB
+  memory_used: true
+  memory_free: true
+  memory_total: true
+
+  # GPU temperature in Celsius
+  temperature: true
+
+  # Power draw in Watts
+  power_draw: true
+
+  # Clock speeds in MHz
+  clock_graphics: true
+  clock_sm: true
+  clock_memory: true
+
+  # Fan speed percentage (0-100)
+  fan_speed: true
+
+  # PCI throughput (MB/s)
+  pci_tx: false
+  pci_rx: false

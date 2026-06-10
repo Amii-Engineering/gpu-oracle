@@ -1,0 +1,23 @@
+[project]
+name = "gpu-oracle"
+version = "0.1.0"
+description = "Track GPU statistics over time and generate interactive dashboards"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "nvidia-ml-py3>=7.352.0",
+    "plotly>=5.18.0",
+    "pyyaml>=6.0.1",
+    "click>=8.1.7",
+    "rich>=13.7.0",
+]
+
+[project.scripts]
+gpu-oracle = "gpu_oracle.__main__:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = []
