@@ -107,9 +107,10 @@ def get_all_metrics(gpu_id: int) -> dict[str, float | None]:
 
     # PCI throughput
     try:
-        pci = pynvml.nvmlDeviceGetPcieThroughput(handle, pynvml.NVML_PCIE_UTIL_COUNT)
-        metrics["pci_tx"] = pci / (1024 * 1024)  # Convert KB/s to MB/s
-        metrics["pci_rx"] = pci / (1024 * 1024)
+        pci_tx = pynvml.nvmlDeviceGetPcieThroughput(handle, pynvml.NVML_PCIE_UTIL_TX_BYTES)
+        pci_rx = pynvml.nvmlDeviceGetPcieThroughput(handle, pynvml.NVML_PCIE_UTIL_RX_BYTES)
+        metrics["pci_tx"] = pci_tx / (1024 * 1024)  # Convert KB/s to MB/s
+        metrics["pci_rx"] = pci_rx / (1024 * 1024)
     except pynvml.NVMLError:
         metrics["pci_tx"] = None
         metrics["pci_rx"] = None
