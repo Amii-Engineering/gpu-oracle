@@ -190,7 +190,7 @@ class Plotter:
 
         # Apply dark theme
         fig.update_layout(
-            **{k: v for k, v in DARK_THEME["layout"].items() if k != "font"},
+            **{k: v for k, v in DARK_THEME["layout"].items() if k not in ("font", "legend")},
             title_text=f"<b style='color: #E5E7EB'>GPU Oracle Dashboard</b> <span style='color: #6B7280'>| {self.run_name}</span>",
             title_font_size=20,
             font=dict(color="#E5E7EB", family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", size=12),
