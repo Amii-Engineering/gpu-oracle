@@ -24,7 +24,8 @@ def cli():
 @click.option("--poll-seconds", default=5, help="Polling interval in seconds", show_default=True)
 @click.option("--run", help="Run name (auto-generated if not specified)")
 @click.option("--config", default=None, help="Path to config file", type=click.Path(exists=True))
-def gather(poll_seconds: int, run: str | None, config: str | None):
+@click.option("--skip-plot", is_flag=True, help="Skip plotting after gathering")
+def gather(poll_seconds: int, run: str | None, config: str | None, skip_plot: bool):
     """Gather GPU metrics over time.
 
     Press Ctrl+C to stop gathering and save results.
@@ -50,6 +51,8 @@ def gather(poll_seconds: int, run: str | None, config: str | None):
     gatherer = Gatherer(poll_seconds=poll_seconds, config=cfg, run_name=run)
     try:
         gatherer.run()
+        if not skip_plot:
+            _plot(run=gatherer.run_name, output=None, runs_dir=None)
     except Exception as e:
         console.print(f"\n[red]Error during gathering:[/red] {e}")
         sys.exit(1)
@@ -64,6 +67,11 @@ def plot(run: str, output: str | None, runs_dir: str | None):
 
     Example:
         gpu-oracle plot --run run_20250610_143026_a7b3c
+    """
+    _plot(run=run, output=output, runs_dir=runs_dir)
+
+def _plot(run: str, output: str | None, runs_dir: str | None):
+    """Generate an interactive HTML dashboard from a run.
     """
     runs_dir_path = Path(runs_dir) if runs_dir else None
     output_path = Path(output) if output else None
