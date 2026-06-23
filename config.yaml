@@ -27,3 +27,6 @@ metrics:
   # PCI throughput (MB/s)
   pci_tx: false
   pci_rx: false
+
+  # Thermal throttling reasons (software, hardware, both, none)
+  throttling_reasons: true

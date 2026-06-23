@@ -115,6 +115,13 @@ def get_all_metrics(gpu_id: int) -> dict[str, float | None]:
         metrics["pci_tx"] = None
         metrics["pci_rx"] = None
 
+    # GPU thermal throttling
+    try:
+        throttling_reasons = int(pynvml.nvmlDeviceGetCurrentClocksThrottleReasons(handle))
+        metrics["throttling_reasons"] = throttling_reasons
+    except pynvml.NVMLError:
+        metrics["throttling_reasons"] = None
+
     return metrics
 
 
