@@ -137,11 +137,11 @@ class Gatherer:
                 if "throttling_sw" in filtered:
                     if "throttling_hw" in filtered:
                         for gpu_id in range(num_gpus):
-                            sw = self.data[-num_gpus + gpu_id].get("throttling_sw") or 0
-                            hw = self.data[-num_gpus + gpu_id].get("throttling_hw") or 0
+                            sw = self.data[-num_gpus + gpu_id].get("throttling_sw") or 0.0
+                            hw = self.data[-num_gpus + gpu_id].get("throttling_hw") or 0.0
                             console.print(
-                                f"\n[dim]GPU {gpu_id} - SW Throttle: {sw:.0f} hours | "
-                                f"HW Throttle: {hw:.0f} hours[/dim]", end=""
+                                f"\n[dim]GPU {gpu_id} - SW Throttle: {sw:.2f} hours | "
+                                f"HW Throttle: {hw:.2f} hours[/dim]", end=""
                             )
 
                         console.print("", end=f"\033[{num_gpus}F")
