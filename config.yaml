@@ -28,5 +28,6 @@ metrics:
   pci_tx: false
   pci_rx: false
 
-  # Thermal throttling reasons (software, hardware, both, none)
-  throttling_reasons: true
+  # Thermal throttling
+  throttling_sw: true
+  throttling_hw: true

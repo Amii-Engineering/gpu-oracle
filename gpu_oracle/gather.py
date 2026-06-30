@@ -119,8 +119,6 @@ class Gatherer:
             self._print_startup_info()
             console.print("\n[dim]Gathering metrics...[/dim]\n")
 
-            sw_throttling_counts = [0] * num_gpus
-            hw_throttling_counts = [0] * num_gpus
             self.start_time = datetime.now()
 
             while self.running:
@@ -129,16 +127,6 @@ class Gatherer:
                     try:
                         all_metrics = get_all_metrics(gpu_id)
                         filtered = filter_metrics(all_metrics, enabled_metrics)
-                        if "throttling_reasons" in filtered and filtered["throttling_reasons"] is not None:
-                            throttling_reasons = filtered["throttling_reasons"]
-                            if throttling_reasons & 0x20:
-                                sw_throttling_counts[gpu_id] += 1
-
-                            if throttling_reasons & 0x40:
-                                hw_throttling_counts[gpu_id] += 1
-                            
-                        filtered["accumulated_sw_throttling_time"] = sw_throttling_counts[gpu_id] * self.poll_seconds
-                        filtered["accumulated_hw_throttling_time"] = hw_throttling_counts[gpu_id] * self.poll_seconds
                         self.data.append(filtered)
                     except MetricError as e:
                         console.print(f"[red]Error polling GPU {gpu_id}:[/red] {e}")
@@ -146,15 +134,20 @@ class Gatherer:
                 # Show progress
                 elapsed = (datetime.now() - self.start_time).total_seconds()
                 console.print(f"[dim]Elapsed: {elapsed:.0f}s | Samples: {len(self.data)}[/dim]", end="\r")
-                if "throttling_reasons" in filtered:
-                    for gpu_id in range(num_gpus):
-                        console.print(
-                            f"\n[dim]GPU {gpu_id} - SW Throttling: {sw_throttling_counts[gpu_id]} | "
-                            f"HW Throttling: {hw_throttling_counts[gpu_id]}[/dim]", end=""
-                        )
-                    
-                    console.print("", end=f"\033[{num_gpus}F")
+                if "throttling_sw" in filtered:
+                    if "throttling_hw" in filtered:
+                        for gpu_id in range(num_gpus):
+                            sw = self.data[-num_gpus + gpu_id].get("throttling_sw") or 0
+                            hw = self.data[-num_gpus + gpu_id].get("throttling_hw") or 0
+                            console.print(
+                                f"\n[dim]GPU {gpu_id} - SW Throttle: {sw:.0f} hours | "
+                                f"HW Throttle: {hw:.0f} hours[/dim]", end=""
+                            )
 
+                        console.print("", end=f"\033[{num_gpus}F")
+                    else:
+                        raise Exception("throttling_sw metric is present but throttling_hw is missing. This should not happen.")
+                    
                 time.sleep(self.poll_seconds)
 
             self.end_time = datetime.now()

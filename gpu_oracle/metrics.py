@@ -1,5 +1,6 @@
 """Metric definitions and NVML wrappers for GPU Oracle."""
 
+import subprocess
 from datetime import datetime
 
 import pynvml
@@ -115,12 +116,23 @@ def get_all_metrics(gpu_id: int) -> dict[str, float | None]:
         metrics["pci_tx"] = None
         metrics["pci_rx"] = None
 
-    # GPU thermal throttling
+    # SW and HW thermal throttling time (microseconds, cumulative since driver load)
     try:
-        throttling_reasons = int(pynvml.nvmlDeviceGetCurrentClocksThrottleReasons(handle))
-        metrics["throttling_reasons"] = throttling_reasons
-    except pynvml.NVMLError:
-        metrics["throttling_reasons"] = None
+        result = subprocess.run(
+            [
+                "nvidia-smi", "-i", str(gpu_id),
+                "--query-gpu=clocks_event_reasons_counters.sw_thermal_slowdown,"
+                "clocks_event_reasons_counters.hw_thermal_slowdown",
+                "--format=csv,noheader,nounits",
+            ],
+            capture_output=True, text=True, timeout=5,
+        )
+        sw_us, hw_us = result.stdout.strip().split(", ")
+        metrics["throttling_sw"] = float(sw_us) / 3.6e9
+        metrics["throttling_hw"] = float(hw_us) / 3.6e9
+    except Exception:
+        metrics["throttling_sw"] = None
+        metrics["throttling_hw"] = None
 
     return metrics
 

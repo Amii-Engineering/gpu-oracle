@@ -25,9 +25,8 @@ METRIC_CONFIG = {
     "fan_speed": {"title": "Fan Speed", "unit": "%", "color": "#73D9D7", "conversion": 1.0},
     "pci_tx": {"title": "PCI TX Throughput", "unit": "MB/s", "color": "#FFA68D", "conversion": 1.0},
     "pci_rx": {"title": "PCI RX Throughput", "unit": "MB/s", "color": "#FFB3BA", "conversion": 1.0},
-    "throttling_reasons": {"title": "Throttling Reasons", "unit": "", "color": "#DA5DCA", "conversion": 1.0},
-    "accumulated_sw_throttling_time": {"title": "Accumulated SW Throttling Time", "unit": "s", "color": "#FF1500", "conversion": 1.0},
-    "accumulated_hw_throttling_time": {"title": "Accumulated HW Throttling Time", "unit": "s", "color": "#FF1500", "conversion": 1.0},   
+    "throttling_sw": {"title": "SW Thermal Throttling", "unit": "h", "color": "#DA5DCA", "conversion": 1.0},
+    "throttling_hw": {"title": "HW Thermal Throttling", "unit": "h", "color": "#B03AB5", "conversion": 1.0},
 }
 
 # GPU color palette (Grafana-inspired: distinct but not too bright)
